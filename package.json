@@ -1,0 +1,29 @@
+{
+  "name": "bestofjs-webtasks",
+  "version": "0.1.0",
+  "description": "Bestof.js.org micro-services",
+  "scripts": {
+    "start": "node user-content-api/src/server",
+    "build": "webpack",
+    "deploy": "node user-content-api/deploy-webtask",
+    "test": ""
+  },
+  "dependencies": {
+    "body-parser": "^1.14.2",
+    "dotenv": "^1.2.0",
+    "express": "^4.13.3",
+    "isomorphic-fetch": "^2.2.1",
+    "mongoose": "^4.3.7",
+    "webtask-tools": "^1.2.0"
+  },
+  "devDependencies": {
+    "faucet": "0.0.1",
+    "tape": "^4.2.0"
+  },
+  "keywords": [
+    "micro-services",
+    "webtask.io"
+  ],
+  "author": "Michael Rambeau",
+  "license": "ISC"
+}
