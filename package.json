@@ -1,12 +1,16 @@
 {
   "name": "bestofjs-webtasks",
   "version": "0.1.0",
-  "description": "Bestof.js.org micro-services",
+  "description": "Bestof.js.org micro-services built with webtask.io",
   "scripts": {
     "start": "node user-content-api/src/server",
     "build": "webpack",
     "deploy": "node user-content-api/deploy-webtask",
-    "test": ""
+    "test": "npm run setup && npm run test-api && npm run cleanup",
+    "test-ava": "tape test/index.js --verbose",
+    "test-api": "tape test/index.js | faucet",
+    "setup": "node commands/setup",
+    "cleanup": "node commands/cleanup"
   },
   "dependencies": {
     "body-parser": "^1.14.2",
@@ -18,7 +22,8 @@
   },
   "devDependencies": {
     "faucet": "0.0.1",
-    "tape": "^4.2.0"
+    "supertest": "^1.1.0",
+    "tape": "^4.4.0"
   },
   "keywords": [
     "micro-services",
