@@ -4,12 +4,14 @@ mongoose.Promise = global.Promise;
 
 const runApiTests = require('./api');
 const createApp = require('../user-content-api/src/lib/app');
+const authMiddleware = require('./authMiddleware');
 
 const uri = process.env.MONGO_URI_TEST;
 const context = {
   data: {
     MONGO_URI: uri
-  }
+  },
+  authMiddleware
 };
 
 const app = createApp(context);

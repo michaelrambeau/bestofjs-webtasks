@@ -24,7 +24,7 @@ function deleteCollection(db, key) {
       if (err) return reject(err);
       const count = result.result.n;
       if (count > 0) {
-        console.log('Deleted', count);
+        console.log(count, `${key} deleted`);
       } else {
         console.log(`No ${key} item to delete.`);
       }

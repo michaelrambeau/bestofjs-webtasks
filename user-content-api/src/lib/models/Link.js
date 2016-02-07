@@ -29,7 +29,7 @@ const schema = new mongoose.Schema(fields, {
 
 schema.methods.toJSON = function () {
   const item = this;
-  const result = _.pick(item, ['_id', 'title', 'url', 'projects', 'createdBy', 'createdAt']);
+  const result = _.pick(item, ['_id', 'title', 'url', 'projects', 'createdBy', 'createdAt', 'updatedAt']);
   // result.id = item._id;
   // result.projects = item.projects.map(project => project.key);
   result.comment = item.comment.md;

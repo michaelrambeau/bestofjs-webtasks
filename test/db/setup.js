@@ -18,15 +18,18 @@ function setup(db) {
   });
 }
 
-function createCollection(db, collectionName) {
-  const collection = db.collection(collectionName);
+function createCollection(db, key) {
+  const collection = db.collection(key);
   return new Promise((resolve, reject) => {
-    const docs = sample[collectionName].results.map(item => Object.assign({}, item, {
-      sample: true
-    }));
+    const docs = sample[key].results.map(
+      item => Object.assign({}, item, {
+        sample: true
+      })
+    );
     collection.insert(docs, (err, result) => {
       if (err) return reject(err);
-      console.log('Inserted', result.result.n);
+      const count = result.result.n;
+      console.log(count, `${key} inserted`);
       return resolve(db);
     });
   });

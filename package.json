@@ -8,7 +8,7 @@
     "deploy": "node user-content-api/deploy-webtask",
     "test": "npm run setup && npm run test-api && npm run cleanup",
     "test-ava": "tape test/index.js --verbose",
-    "test-api": "tape test/index.js | faucet",
+    "test-api": "tape test/index.js",
     "setup": "node commands/setup",
     "cleanup": "node commands/cleanup"
   },

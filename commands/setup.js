@@ -6,6 +6,14 @@ const setup = require('../test/db/setup');
 const connect = require('../test/db/connect');
 
 connect(process.env.MONGO_URI_TEST)
-  .then(db => setup(db))
-  .then(db => db.close())
-  .then(() => console.log('Setup finish!'));
+  .then(db => {
+    return setup(db)
+      .then(() => db.close())
+      .catch(err => {
+        db.close();
+        console.log('Error during the setup', err.message);
+        throw new Error(err.message);
+      });
+  })
+  .then(() => console.log('Setup OK!'))
+  .catch(err => console.log('Setup exit with error', err.message));

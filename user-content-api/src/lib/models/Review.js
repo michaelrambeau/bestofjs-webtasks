@@ -11,11 +11,10 @@ const fields = {
     html: String,
     md: String
   },
-  createdAt: {
-    type: Date
-  },
+  createdAt: { type: Date },
   createdBy: { type: String },
-  updatedAt: { type: Date }
+  updatedAt: { type: Date },
+  sample: Boolean
 };
 
 const schema = new mongoose.Schema(fields, {
@@ -25,7 +24,7 @@ const schema = new mongoose.Schema(fields, {
 
 schema.methods.toJSON = function () {
   const item = this;
-  const result = _.pick(item, ['_id', 'project','rating', 'createdBy', 'createdAt']);
+  const result = _.pick(item, ['_id', 'project', 'rating', 'createdBy', 'createdAt', 'updatedAt']);
   result.comment = item.comment.md;
   return result;
 };

@@ -5,15 +5,17 @@ require('isomorphic-fetch'); // node-fetch is not available on webtask.io
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
+const tokenMiddleware = require('./auth/authMiddleware');
+
 const Review = require('./models/Review');
 const Link = require('./models/Link');
 const Project = require('./models/Project');
 
 module.exports = createServer;
 
+// Connect to database if it has not been done before
 function connectDb(uri) {
   const state = mongoose.connections[0].readyState;
-  console.log('state', state);
   if (state > 0) return;
   console.log('Connecting to', uri);
   mongoose.connect(uri);
@@ -24,14 +26,15 @@ function createServer(localContext) {
   console.log('Start the Express app');
   const app = express();
 
-  // Apply custom middlewares to check user token and context credentials
-  // app.use(crossDomainMiddleware);
+  app.use(crossDomainMiddleware);
   app.use(dbMiddleware(localContext));
-  // app.use(tokenMiddleware);
-
 
   // body-parser middleware to parse `application/json` content type
   app.use(bodyParser.json());
+
+  // Use the default middleware for authentication,
+  // except if an other one is passed through the localContext (for tests)
+  const auth = localContext.authMiddleware || tokenMiddleware;
 
   console.log('Express ready!');
 
@@ -42,7 +45,7 @@ function createServer(localContext) {
       'result': 'OK!'
     });
   });
-  app.get('/token', tokenMiddleware, function (req, res) {
+  app.get('/token', auth, function (req, res) {
     res.json({
       user: res.userProfile
     });
@@ -62,14 +65,16 @@ function createServer(localContext) {
   createRoutes(app, {
     endPoint: '/reviews',
     Model: Review,
-    editableFields: ['rating', 'comment']
+    editableFields: ['rating', 'comment'],
+    auth
   });
 
   // LINKS API
   createRoutes(app, {
     endPoint: '/links',
     Model: Link,
-    editableFields: ['url', 'title', 'projects', 'comment']
+    editableFields: ['url', 'title', 'projects', 'comment'],
+    auth
   });
 
   app.options('*', (req, res, next) => {
@@ -87,6 +92,7 @@ function createServer(localContext) {
 function createRoutes(app, options) {
   // API URL end point: `/reviews` or `/links`
   const endPoint = options.endPoint;
+  const auth = options.auth;
 
   // Class name defined in parse.com
   const Model = options.Model;
@@ -110,7 +116,7 @@ function createRoutes(app, options) {
   });
 
   // POST: create a new item
-  app.post(endPoint, tokenMiddleware, function (req, res) {
+  app.post(endPoint, auth, function (req, res) {
     var data = {};
     _.assign(data, req.body, {
       createdBy: res.userProfile.nickname,
@@ -134,7 +140,7 @@ function createRoutes(app, options) {
   });
 
   // PUT: update an existing item
-  app.put(`${endPoint}/:id`, tokenMiddleware, function (req, res) {
+  app.put(`${endPoint}/:id`, auth, function (req, res) {
     const id = req.params.id;
     // Keep only `rating` and `comment` fields from the PUT request
     var data = _.pick(req.body, editableFields);
@@ -167,48 +173,16 @@ function createRoutes(app, options) {
   });
 }
 
-// Get user profile from `id_token` (16 characters token)
-function getUserProfile(token, done) {
-  if (!token) return done(new Error('Token is missing!'));
-  console.log('Auth0 API call...');
-  const options = {
-    headers: {
-      'Authorization': 'Bearer ' + token
-    }
-  };
-  const url = 'https://bestofjs.auth0.com/userinfo';
-  fetch(url, options)
-    .then(response => checkStatus(response))
-    .then(response => response.json())
-    .then(json => done(null, json))
-    .catch(err => done(err));
-}
-
 //
 // Middleware applied to all routes
 //
 
-
 function dbMiddleware(localContext) {
   return function (req, res, done) {
-    const context = localContext ? localContext : req.webtaskContext;
+    const context = req.webtaskContext || localContext;
     connectDb(context.data.MONGO_URI);
     done();
   };
-}
-
-// Check the token from request headers and update the `res` object with the user profile.
-function tokenMiddleware(req, res, done) {
-  const token = req.headers.token;
-  if (!token) return res.status(401).json({ error: 'Token is required!' });
-  console.log('Checking access_token', token);
-  getUserProfile(token, function (err, profile) {
-    if (err) return res.status(401).json({ error: 'Authentication error' });
-    if (!profile) return res.status(401).json({ error: 'No user profile' });
-    console.log('Auth0 Response OK!', profile.nickname);
-    res.userProfile = profile;
-    done();
-  });
 }
 
 function crossDomainMiddleware(req, res, next) {
@@ -216,17 +190,6 @@ function crossDomainMiddleware(req, res, next) {
   res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type,token');
   next();
-}
-
-function checkStatus(response) {
-  if (response.status >= 200 && response.status < 300) {
-    return response;
-  } else {
-    console.log('Response=', response.json());
-    const error = new Error(response.statusText);
-    error.response = response;
-    throw error;
-  }
 }
 
 function getProjectKey(name) {
