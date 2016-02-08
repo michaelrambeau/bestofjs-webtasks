@@ -16,4 +16,5 @@ connect(process.env.MONGO_URI_TEST)
       });
   })
   .then(() => console.log('Setup OK!'))
-  .catch(err => console.log('Setup exit with error', err.message));
+  // exit with an error code to prevent the tests from running if setup fails
+  .catch(() => process.exit(1));
