@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const _ = require('lodash');
 
+const getErrorMessage = require('../getErrorMessage');
+
 const fields = {
   project: {
     type: mongoose.Schema.ObjectId,
@@ -34,7 +36,7 @@ schema.statics.canCreate = function (data) {
     .then(results => {
       console.log('Existing reviews by the same user', results);
       if (results.length > 0) {
-        throw new Error('A review by the same user already exists!');
+        throw new Error(getErrorMessage('DUPLICATE_REVIEW'));
       }
       return true;
     });

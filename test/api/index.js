@@ -1,6 +1,7 @@
 const test = require('tape');
 const request = require('supertest');
 const checkItemsCount = require('./helpers');
+const getErrorMessage = require('../../user-content-api/src/lib/getErrorMessage');
 const sample = {
   reviews: require('../sample/reviews').results
 };
@@ -70,6 +71,22 @@ function run(app) {
 
     // Then try again to create the same review
     // An error should be triggered (only one review by project and by user)
+    console.log('Creating a duplicate review...');
+    test('POST reviews', t => {
+      request(app)
+      .post('/reviews')
+      .send(postData)
+      .set('token', 'tokenXXX')
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(400)
+      .end(function (err, result) {
+        const json = result.body;
+        console.log('RESULT => ', json);
+        t.equal(json.message, getErrorMessage('DUPLICATE_REVIEW'));
+        t.end();
+      });
+    });
 
     test('GET links', t => {
       request(app)
