@@ -11,6 +11,8 @@ const Review = require('./models/Review');
 const Link = require('./models/Link');
 const Project = require('./models/Project');
 
+const getErrorMessage = require('./getErrorMessage');
+
 module.exports = createServer;
 
 // Connect to database if it has not been done before
@@ -124,13 +126,13 @@ function createRoutes(app, options) {
     data = formatComment(data);
     Model.canCreate(data)
       .then(() => {
-        console.log('POST request...', data);
+        // console.log('POST request...', data);
         const item = new Model(data);
         item.createdAt = new Date();
         return item.save();
       })
       .then(result => {
-        console.log('ITEM CREATED!', result);
+        // console.log('ITEM CREATED!', result);
         return res.json(result);
       })
       .catch(err => {
@@ -145,13 +147,13 @@ function createRoutes(app, options) {
     // Keep only `rating` and `comment` fields from the PUT request
     var data = _.pick(req.body, editableFields);
     data = formatComment(data);
-    console.log('PUT request', id, data);
+    // console.log('PUT request', id, data);
 
     // Check if the user requesting the update is the one who created the item
     Model.findById(id)
       .then(result => {
         if (res.userProfile.nickname !== result.createdBy) {
-          return sendError('Only the creator ' + result.createdBy + ' can update!');
+          return Promise.reject(new Error(getErrorMessage('CREATOR_ONLY')));
         }
         console.log('Update allowed', result.createdBy);
         return result;
@@ -163,11 +165,11 @@ function createRoutes(app, options) {
         return item.save();
       })
       .then(result => {
-        console.log('ITEM UPDATED!', result);
+        console.log('ITEM UPDATED!');
         return res.json(result);
       })
       .catch(err => {
-        console.log('NO UPDATE', err);
+        console.log('NO UPDATE', err.message);
         sendError(res, err.message);
       });
   });
@@ -205,6 +207,5 @@ function formatComment(item) {
   item.comment = {
     md
   };
-  console.log('>> ITEM', item);
   return item;
 }

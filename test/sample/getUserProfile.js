@@ -1,7 +1,7 @@
-module.exports = {
-  "name": "User test",
+module.exports = (number) => ({
+  "name": 'User Test' + number,
   "picture": "https://avatars.githubusercontent.com/u/5546996?v=3",
-  "nickname": "usertest",
+  "nickname": 'usertest' + number,
   "gravatar_id": "",
   "url": "https://api.github.com/users/michaelrambeau",
   "html_url": "https://github.com/michaelrambeau",
@@ -36,4 +36,4 @@ module.exports = {
   ],
   "created_at": "2016-01-02T08:36:09.378Z",
   "sub": "github|5546996"
-};
+});

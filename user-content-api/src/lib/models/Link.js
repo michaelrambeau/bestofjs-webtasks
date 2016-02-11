@@ -20,7 +20,8 @@ const fields = {
     type: Date
   },
   createdBy: { type: String },
-  updatedAt: { type: Date }
+  updatedAt: { type: Date },
+  sample: Boolean
 };
 
 const schema = new mongoose.Schema(fields, {
