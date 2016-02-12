@@ -171,7 +171,7 @@ function createRoutes(app, options) {
       })
       .catch(err => {
         console.log('NO UPDATE', err);
-        const msg = err.code == '11001' ? getErrorMessage('DUPLICATE_LINK') : err.message;
+        const msg = err.code == '11001' || err.code == '11000' ? getErrorMessage('DUPLICATE_LINK') : err.message;
         sendError(res, msg);
       });
   });
