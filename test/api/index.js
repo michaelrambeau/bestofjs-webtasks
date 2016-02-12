@@ -12,20 +12,15 @@ const sample = {
 
 function run(app) {
   return new Promise((resolve) => {
-    if (true) test('GET reviews', t => {
-      request(app)
-      .get('/reviews')
-      .expect('Content-Type', /json/)
-      .expect(200)
-      .end(function (err, res) {
-        if (err) t.fail();
-        const reviews = res.body.results;
-        t.ok(Array.isArray(reviews) && reviews.length > 0, 'Should return some reviews');
-        t.equal(sample.reviews.length, reviews.length, `It should return ${sample.reviews.length} reviews`);
-        const checkRating = reviews.every(review => review.rating > 0);
-        t.ok(checkRating, 'All reviews should have a `rating`');
-        t.end();
-      });
+    test('GET reviews', t => {
+      getItems(app, 'reviews')
+        .then(items => {
+          t.ok(Array.isArray(items) && items.length > 0, 'Should return some items');
+          t.equal(sample.reviews.length, items.length, `It should return ${sample.reviews.length} reviews`);
+          const checkRating = items.every(review => review.rating > 0);
+          t.ok(checkRating, 'All reviews should have a `rating`');
+          t.end();
+        });
     });
 
     const postData = {
@@ -36,7 +31,7 @@ function run(app) {
     };
 
     // First send an invalid request (no token)
-    if (true) test('POST reviews', t => {
+    test('POST reviews', t => {
       request(app)
       .post('/reviews')
       .send(postData)
@@ -47,21 +42,14 @@ function run(app) {
       });
     });
 
-    if (false) test('Checking count', t => {
-      getItems(app, 'reviews')
-        .then(items => {
-          t.ok(Array.isArray(items) && items.length > 0, 'Should return some items');
-          const expectedCount = sample.reviews.length;
-          t.equal(expectedCount, items.length, `It should return ${expectedCount} items`);
-          t.end();
-        })
-        .catch(err => t.fail(err.message));
+    test('Checking count', t => {
+      checkCount(app, 'reviews', sample.reviews.length, t);
     });
 
     // Then, the same request but with a fake token
     const token = '1';
     const username = getUserProfile(token).nickname;
-    if (true) test('POST reviews', t => {
+    test('POST reviews', t => {
       request(app)
         .post('/reviews')
         .send(postData)
@@ -81,12 +69,12 @@ function run(app) {
         });
     });
 
-    if (true) test('Checking count', t => {
+    test('Checking count', t => {
       checkCount(app, 'reviews', sample.reviews.length + 1, t);
     });
 
     // Create a review by 'usertest2', and then update it.
-    if (true) createAndUpdate(app, {
+    createAndUpdate(app, {
       token: '2',
       data0: postData,
       data1: {
@@ -95,14 +83,14 @@ function run(app) {
       endPoint: 'reviews'
     });
 
-    if (true) test('Checking count', t => {
+    test('Checking count', t => {
       checkCount(app, 'reviews', sample.reviews.length + 2, t);
     });
 
     // Then try again to create the same review
     // An error should be triggered (only one review by project and by user)
     console.log('Creating a duplicate review...');
-    if (true) test('POST reviews', t => {
+    test('POST reviews', t => {
       request(app)
       .post('/reviews')
       .send(postData)
@@ -117,29 +105,82 @@ function run(app) {
 
     // LINKS
 
-    if (true) test('Checking count', t => {
+    test('Checking count', t => {
       checkCount(app, 'links', sample.links.length, t);
     });
 
+    const linkData0 = {
+      title: 'A new link',
+      url: 'http://devdocs.io/mongoose/',
+      comment: 'devdocs.io is great!',
+      sample: true
+    };
+
     createAndUpdate(app, {
       token: '2',
-      data0: {
-        title: 'A new link',
-        url: 'http://devdocs.io/mongoose/',
-        comment: 'devdocs.io is great!',
-        sample: true
-      },
+      data0: linkData0,
       data1: {
         comment: 'Updating the comment'
       },
       endPoint: 'links'
     });
 
-    if (true) test('Checking count', t => {
+    test('Checking count', t => {
       checkCount(app, 'links', sample.links.length + 1, t);
     });
 
-    if (true) test('GET links', t => {
+    // Try to create a duplicate link (URL should be unique)
+    test('Try to create a duplicate link', t => {
+      request(app)
+        .post('/links')
+        .send(linkData0)
+        .set('token', token)
+        .expect(400)
+        .end(function (err, result) {
+          if (err) {
+            console.log(err.message);
+            t.fail();
+          }
+          const json = result.body;
+          t.equal(json.message, getErrorMessage('DUPLICATE_LINK'), `DUPLICATE_LINK error should be returned`);
+          t.end();
+        });
+    });
+    test('Try to create a duplicate link', t => {
+      request(app)
+        .post('/links')
+        .send(linkData0)
+        .set('token', token)
+        .expect(400)
+        .end(function (err, result) {
+          if (err) {
+            console.log(err.message);
+            t.fail();
+          }
+          const json = result.body;
+          t.equal(json.message, getErrorMessage('DUPLICATE_LINK'), `DUPLICATE_LINK error should be returned`);
+          t.end();
+        });
+    });
+    const id = sample.links[0]._id;
+    test('Try to update a link setting a URL that exists elsewhere ' + id, t => {
+      request(app)
+        .put('/links/' + id)
+        .send(linkData0)
+        .set('token', token)
+        .expect(400)
+        .end(function (err, result) {
+          if (err) {
+            console.log(err.message);
+            t.fail();
+          }
+          const json = result.body;
+          t.equal(json.message, getErrorMessage('DUPLICATE_LINK'), `DUPLICATE_LINK error should be returned`);
+          t.end();
+        });
+    });
+
+    test('GET links', t => {
       request(app)
       .get('/links')
       .expect('Content-Type', /json/)

@@ -152,6 +152,7 @@ function createRoutes(app, options) {
     // Check if the user requesting the update is the one who created the item
     Model.findById(id)
       .then(result => {
+        if (!result) return Promise.reject(new Error('No item found with id ' + id));
         if (res.userProfile.nickname !== result.createdBy) {
           return Promise.reject(new Error(getErrorMessage('CREATOR_ONLY')));
         }
@@ -169,8 +170,9 @@ function createRoutes(app, options) {
         return res.json(result);
       })
       .catch(err => {
-        console.log('NO UPDATE', err.message);
-        sendError(res, err.message);
+        console.log('NO UPDATE', err);
+        const msg = err.code == '11001' ? getErrorMessage('DUPLICATE_LINK') : err.message;
+        sendError(res, msg);
       });
   });
 }

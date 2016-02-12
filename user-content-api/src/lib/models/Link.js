@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const _ = require('lodash');
 
+const getErrorMessage = require('../getErrorMessage');
+
 const fields = {
   projects: [{
     type: mongoose.Schema.ObjectId,
@@ -10,7 +12,8 @@ const fields = {
     type: String
   },
   url: {
-    type: String
+    type: String,
+    unique: true
   },
   comment: {
     html: String,
@@ -42,7 +45,7 @@ schema.statics.canCreate = function (data) {
     .then(results => {
       console.log('Checking existing reviews', results);
       if (results.length > 0) {
-        throw new Error('A link already exists with the same URL!');
+        throw new Error(getErrorMessage('DUPLICATE_LINK'));
       }
       return true;
     });
