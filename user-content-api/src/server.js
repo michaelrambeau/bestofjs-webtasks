@@ -1,5 +1,7 @@
-// Local server entry point
+// Local server entry point, launched by `npm start --port 3333` command
 require('dotenv').load();
+const minimist = require('minimist');
+
 const webtask = require('./lib/app');
 
 const context = {
@@ -10,6 +12,7 @@ const context = {
 
 console.log('Starting manually the Express server', context);
 const app = webtask(context);
-const PORT = 3000;
+const argv = minimist(process.argv.slice(2));
+const PORT = argv.port || 3000;
 console.log('Express server listening on port', PORT);
 app.listen(PORT);

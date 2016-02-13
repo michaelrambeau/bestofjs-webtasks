@@ -6,7 +6,7 @@
     "start": "node user-content-api/src/server",
     "build": "webpack",
     "deploy": "node user-content-api/deploy-webtask",
-    "deploy-production": "node user-content-api/deploy-webtask",
+    "deploy-prod": "node user-content-api/deploy-webtask --prod",
     "test": "npm run cleanup && npm run setup && npm run test-api | faucet",
     "test-debug": "npm run cleanup && npm run setup && npm run test-api",
     "test-ava": "tape test/index.js --verbose",
@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "faucet": "0.0.1",
+    "minimist": "^1.2.0",
     "mongodb": "^2.0.0",
     "supertest": "^1.1.0",
     "tape": "^4.4.0"
