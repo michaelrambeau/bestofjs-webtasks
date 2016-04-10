@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
 const runApiTests = require('./api');
+const runValidationTests = require('./api/model-validation');
 const createApp = require('../user-content-api/src/lib/app');
 const authMiddleware = require('./authMiddleware');
 
@@ -16,7 +17,25 @@ const context = {
 
 const app = createApp(context);
 
-runApiTests(app)
+const p = [
+  runValidationTests(app),
+  runApiTests(app)
+];
+Promise.all(p)
+  .then(() => finish())
+  .catch(err => {
+    console.log('Unexpected ERROR!', err.message);
+    finish();
+  });
+
+if (false) runValidationTests(app)
+  .then(() => finish())
+  .catch(err => {
+    console.log('Unexpected ERROR!', err.message);
+    finish();
+  });
+
+if (false) runApiTests(app)
   .then(() => finish())
   .catch(err => {
     console.log('Unexpected ERROR!', err.message);

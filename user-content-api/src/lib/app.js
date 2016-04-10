@@ -122,17 +122,23 @@ function createRoutes(app, options) {
     var data = {};
     _.assign(data, req.body, {
       createdBy: res.userProfile.nickname,
+      createdAt: new Date()
     });
     data = formatComment(data);
+    console.log('----- POST request -----', data);
+    const item = new Model(data);
+    const validationErrors = item.validateSync();
+    if (validationErrors) {
+      console.log('>>> Mongoose item.validationSync() fails!', validationErrors);
+      return sendError(res, 'Model validation failed', validationErrors);
+    }
     Model.canCreate(data)
       .then(() => {
-        // console.log('POST request...', data);
-        const item = new Model(data);
-        item.createdAt = new Date();
+        console.log('SAVING...');
         return item.save();
       })
       .then(result => {
-        // console.log('ITEM CREATED!', result);
+        console.log('ITEM CREATED!', result);
         return res.json(result);
       })
       .catch(err => {
@@ -200,8 +206,11 @@ function getProjectKey(name) {
   return name.toLowerCase().replace(/[^a-z._\-0-9]+/g, '-');
 }
 
-function sendError(res, message) {
-  res.status(400).json({ message });
+function sendError(res, message, data) {
+  console.log('>>> Send a JSON error object to the client', message);
+  const json = { message };
+  if (data) json.data = data;
+  res.status(400).json(json);
 }
 
 function formatComment(item) {

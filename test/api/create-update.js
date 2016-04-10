@@ -1,3 +1,16 @@
+/*
+Test if a user can create and update an item.
+Trigger 3 API calls: 2 valid and on invalid (update by an other user)
+Parameters:
+- `app`: the Express application
+- `options`: {
+    token: '2',
+    data0: data used to create the item,
+    data1: data used to update the item
+    endPoint: 'reviews' or 'links'
+  }
+*/
+
 const test = require('tape');
 const request = require('supertest');
 const getUserProfile = require('../sample/getUserProfile');

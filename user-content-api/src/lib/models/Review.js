@@ -2,19 +2,36 @@ const mongoose = require('mongoose');
 const _ = require('lodash');
 
 const getErrorMessage = require('../getErrorMessage');
+const constants = require('./constants');
 
 const fields = {
   project: {
     type: mongoose.Schema.ObjectId,
-    ref: 'Project'
+    ref: 'Project',
+    required: true
   },
-  rating: Number,
+  rating: {
+    type: Number,
+    required: true,
+    min: 1,
+    max: 5
+  },
   comment: {
     html: String,
-    md: String
+    md: {
+      type: String,
+      maxlength: constants.COMMENT_MAX_LENGTH
+    }
   },
-  createdAt: { type: Date },
-  createdBy: { type: String },
+  createdAt: {
+    type: Date,
+    required: true
+  },
+  createdBy: {
+    type: String,
+    maxlength: 100,
+    required: true
+  },
   updatedAt: { type: Date },
   sample: Boolean
 };

@@ -19,15 +19,186 @@ Each "webtask" is either a plain JavaScript function either or a basic Express w
 * `src/webtask.js`: entry point to build the file deployed to webtask.io using Webpack
 * `build/webtask.js`: bundled webtask built by Webpack, ignored by git
 
-### URLs
+### Paths
 
-* GET `/reviews/`
-* POST `/reviews/`
-* PUT `/reviews/:id`
+GET `/reviews/`
+
+```javascript
+{
+  "results": [
+    {
+      "_id": "56dc9906494eea0100152a71",
+      "project": "56a95b5843bdc81100111331",
+      "rating": 5,
+      "createdBy": "michaelrambeau",
+      "createdAt": "2016-03-06T20:54:31.003Z",
+      "updatedAt": "2016-03-07T04:44:17.459Z",
+      "comment": "* nice!\n* I like it!"
+    },
+    {
+      "_id": "56e1399e6a6a290100d039aa",
+      "project": "558dc8cf89fc680300dfa5a9",
+      "rating": 5,
+      "createdBy": "azukiwasher",
+      "createdAt": "2016-03-10T09:08:46.620Z",
+      "comment": ""
+    }
+  ]
+}
+```
+
+POST `/reviews/`
+
+Request body:
+
+```javascript
+{
+  "comment": "Good :)",
+  "project": "55723c9f4140883353bc774c",
+  "rating": 4,
+  "title": "link too long"
+}
+```
+
+Response:
+
+```javascript
+{
+  "_id": "5709945bbd5aabb81745b041",
+  "project": "55723c9f4140883353bc774c",
+  "rating": 4,
+  "createdBy": "michaelrambeau",
+  "createdAt": "2016-04-09T23:46:35.382Z",
+  "comment": "Good :)"
+}
+```
+
+Error messages
+
+```javascript
+{
+  "message": "A review by the same user already exists!"
+}
+```
+
+PUT `/reviews/:id`
+
+#### Links
+
+GET `/links/`
+
+```javascript
+{
+  "results": [
+    {
+      "_id": "56ad8b90f6a3e89c08b88ca2",
+      "title": "link",
+      "url": "https://ponyfoo.com/articles/es6-promises-in-depth",
+      "projects": [
+        "55723c9f4140883353bc773e"
+      ],
+      "createdBy": "michaelrambeau",
+      "createdAt": "2016-01-31T04:20:32.186Z"
+    },
+    {
+      "_id": "56ad80027703eee4132d48e2",
+      "title": "link2",
+      "url": "http://development.bestofjs.divshot.io",
+      "projects": [
+        "56a95b5843bdc81100111331",
+        "55fbaf4dc0b48f03006c6c98",
+        "55aba39b8f937d03008d41c8",
+        "55723c9f4140883353bc774e"
+      ],
+      "createdBy": "michaelrambeau",
+      "createdAt": "2016-01-31T03:31:14.572Z",
+      "updatedAt": "2016-03-07T04:43:42.133Z",
+      "comment": "aaa\n\n**bbbb**\n\ncccc"
+    },
+    {
+      "_id": "56adf53426d6e7181453e1bb",
+      "title": "Bootstrap is cool",
+      "url": "https://bestofjs.herokuapp.com/keystone/",
+      "projects": [
+        "55723c9f4140883353bc773e"
+      ],
+      "createdBy": "michaelrambeau",
+      "createdAt": "2016-01-31T11:51:16.132Z",
+      "comment": "yeah!"
+    },
+    {
+      "_id": "56be7a7d9a26030100e70ca3",
+      "title": "Yes it is cool",
+      "url": "https://webtask.io/docs/101",
+      "projects": [
+        "55723c9f4140883353bc773e"
+      ],
+      "createdBy": "michaelrambeau",
+      "createdAt": "2016-02-13T00:36:13.650Z",
+      "updatedAt": "2016-02-13T07:25:46.940Z",
+      "comment": "So cool !!\n* item 1\n* item 2"
+    },
+    {
+      "_id": "56dca24bdf01f30100d38494",
+      "title": "one more link",
+      "url": "http://michaelrambeau.com/",
+      "projects": [
+        "56a95b5843bdc81100111331"
+      ],
+      "createdBy": "michaelrambeau",
+      "createdAt": "2016-03-06T21:34:03.090Z",
+      "updatedAt": "2016-04-03T22:14:34.706Z",
+      "comment": "* item1\n* item2\n* item3\n* item4"
+    }
+  ]
+}
+```
+
+POST `/links/`
+
+Request body:
+
+```javascript
+{
+  "title": "my link",
+  "projects": ["55723c9f4140883353bc774c"],
+  "url": "http://mongoosejs.com/docs/guide.html",
+  "comment": "Good :)"
+}
+```
+
+Response:
+
+```javascript
+{
+  "_id": "570875279aa6dc0c08764a76",
+  "title": "link",
+  "url": "http://mongoosejs.com/docs/guide.html?a",
+  "projects": [
+    "55723c9f4140883353bc774c"
+  ],
+  "createdBy": "michaelrambeau",
+  "createdAt": "2016-04-09T03:21:11.788Z",
+  "comment": "Good :)"
+}
+```
+
+Errors 400
+
+```javascript
+{
+  "message": "A link with the same URL already exists!"
+}
+```
+
+```javascript
+{
+  "message": "Link validation failed"
+}
+```
 
 
-* GET `/links/`
-* POST `/links/`
+
 * PUT `/links/:id`
 
 ### Local web server

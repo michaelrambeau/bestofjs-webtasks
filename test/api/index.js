@@ -31,7 +31,7 @@ function run(app) {
     };
 
     // First send an invalid request (no token)
-    test('POST reviews', t => {
+    test('POST reviews without a token', t => {
       request(app)
       .post('/reviews')
       .send(postData)
@@ -49,7 +49,7 @@ function run(app) {
     // Then, the same request but with a fake token
     const token = '1';
     const username = getUserProfile(token).nickname;
-    test('POST reviews', t => {
+    test('POST reviews with a token', t => {
       request(app)
         .post('/reviews')
         .send(postData)
@@ -58,7 +58,7 @@ function run(app) {
         .end(function (err, result) {
           if (err) {
             console.log(err.message);
-            t.fail();
+            return t.fail(err.message);
           }
           const json = result.body;
           const _id = json._id;
@@ -112,6 +112,7 @@ function run(app) {
     const linkData0 = {
       title: 'A new link',
       url: 'http://devdocs.io/mongoose/',
+      projects: '55b16a6d97f4cd0300d28ea8',
       comment: 'devdocs.io is great!',
       sample: true
     };
@@ -139,7 +140,7 @@ function run(app) {
         .end(function (err, result) {
           if (err) {
             console.log(err.message);
-            t.fail();
+            return t.fail(err.message);
           }
           const json = result.body;
           t.equal(json.message, getErrorMessage('DUPLICATE_LINK'), `DUPLICATE_LINK error should be returned`);
@@ -155,7 +156,7 @@ function run(app) {
         .end(function (err, result) {
           if (err) {
             console.log(err.message);
-            t.fail();
+            return t.fail(err.message);
           }
           const json = result.body;
           t.equal(json.message, getErrorMessage('DUPLICATE_LINK'), `DUPLICATE_LINK error should be returned`);
@@ -172,7 +173,7 @@ function run(app) {
         .end(function (err, result) {
           if (err) {
             console.log(err.message);
-            t.fail();
+            return t.fail(err.message);
           }
           const json = result.body;
           t.equal(json.message, getErrorMessage('DUPLICATE_LINK'), `DUPLICATE_LINK error should be returned`);
@@ -186,7 +187,7 @@ function run(app) {
       .expect('Content-Type', /json/)
       .expect(200)
       .end(function (err, res) {
-        if (err) t.fail();
+        if (err) return t.fail(err.message);
         const links = res.body.results;
         t.ok(Array.isArray(links) && links.length > 0, 'Should return some links');
         const checkUrl = links.every(link => link.url.length > 0);

@@ -6,7 +6,7 @@ module.exports = {
       "rating": 4,
       "createdBy": "michaelrambeau",
       "createdAt": "2016-01-31T21:09:49.136Z",
-      "comment": "good!"
+      "comment": "This is my comment: good!"
     },
     {
       "_id": "56b25fedacc5b3640932d68e",
@@ -14,7 +14,7 @@ module.exports = {
       "rating": 5,
       "createdBy": "michaelrambeau",
       "createdAt": "2016-02-03T20:15:41.567Z",
-      "comment": "Great!"
+      "comment": "Here is an other comment: great!"
     }
   ]
 }
