@@ -1,5 +1,9 @@
+/*
+Return an array of invalid "links"
+to test model validation rules (sync. code)
+*/
 const validItem = require('./validItem');
-const omit = require('lodash/object/omit');
+const omit = require('lodash').omit;
 
 const invalidItems = [
   {
