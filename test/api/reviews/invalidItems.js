@@ -1,5 +1,6 @@
 /*
 Return an array of invalid "reviews"
+to test model validation rules (sync. code)
 */
 const validItem = require('./validItem');
 const omit = require('lodash').omit;

@@ -16,7 +16,7 @@ function run(app) {
       getItems(app, 'reviews')
         .then(items => {
           t.ok(Array.isArray(items) && items.length > 0, 'Should return some items');
-          t.equal(sample.reviews.length, items.length, `It should return ${sample.reviews.length} reviews`);
+          t.equal(items.length, sample.reviews.length, `It should return ${sample.reviews.length} reviews`);
           const checkRating = items.every(review => review.rating > 0);
           t.ok(checkRating, 'All reviews should have a `rating`');
           t.end();

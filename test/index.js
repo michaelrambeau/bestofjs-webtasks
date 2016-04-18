@@ -28,20 +28,6 @@ Promise.all(p)
     finish();
   });
 
-if (false) runValidationTests(app)
-  .then(() => finish())
-  .catch(err => {
-    console.log('Unexpected ERROR!', err.message);
-    finish();
-  });
-
-if (false) runApiTests(app)
-  .then(() => finish())
-  .catch(err => {
-    console.log('Unexpected ERROR!', err.message);
-    finish();
-  });
-
 function finish() {
   console.log('> Closing the db...');
   mongoose.disconnect((err) => {
