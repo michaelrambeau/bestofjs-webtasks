@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const compression = require('compression');
 const _ = require('lodash');
 require('isomorphic-fetch'); // node-fetch is not available on webtask.io
 const mongoose = require('mongoose');
@@ -33,6 +34,9 @@ function createServer(localContext) {
 
   // body-parser middleware to parse `application/json` content type
   app.use(bodyParser.json());
+
+  // compression middleware
+  app.use(compression());
 
   // Use the default middleware for authentication,
   // except if an other one is passed through the localContext (for tests)

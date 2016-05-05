@@ -1,6 +1,6 @@
 {
   "name": "bestofjs-webtasks",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Bestof.js.org micro-services built with webtask.io",
   "scripts": {
     "start": "nodemon user-content-api/src/server.js",
@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "body-parser": "^1.14.2",
+    "compression": "^1.6.1",
     "dotenv": "^1.2.0",
     "express": "^4.13.3",
     "isomorphic-fetch": "^2.2.1",
@@ -24,6 +25,8 @@
     "webtask-tools": "^1.2.0"
   },
   "devDependencies": {
+    "eslint-config-airbnb": "^8.0.0",
+    "eslint-plugin-react": "^5.0.1",
     "faucet": "0.0.1",
     "minimist": "^1.2.0",
     "mongodb": "^2.0.0",

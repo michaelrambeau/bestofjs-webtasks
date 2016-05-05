@@ -9,12 +9,13 @@ module.exports = {
     libraryTarget: 'commonjs2'
   },
   externals: {
-    'express': true,
-    'lodash': true,
+    express: true,
+    lodash: true,
     'body-parser': true,
     'webtask-tools': true,
     'isomorphic-fetch': true,
-    'mongoose': true
+    mongoose: true,
+    compression: true
   },
   plugins: [
     new webpack.optimize.DedupePlugin(),
