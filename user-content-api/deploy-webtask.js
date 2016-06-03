@@ -12,7 +12,7 @@ const prod = argv.prod;
 
 const options = [
   `--name user-content-api-${prod ? version : 'dev'}`,
-  `--secret MONGO_URI=${process.env.MONGO_URI}`,
+  `--secret MONGO_URI=${process.env[prod ? 'MONGO_URI' : 'MONGO_URI_TEST']}`,
   `--secret AUTH0_API_TOKEN=${process.env.AUTH0_API_TOKEN}`,
   `--no-parse --no-merge`
 ];
