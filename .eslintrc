@@ -1,5 +1,5 @@
 {
-  "extends": "airbnb",
+  "extends": "standard",
   "rules": {
     "indent": [2, 2],
     "comma-dangle": 0,

@@ -1,11 +1,11 @@
 {
   "name": "bestofjs-webtasks",
-  "version": "0.2.0",
+  "version": "2.0.0",
   "description": "Bestof.js.org micro-services built with webtask.io",
   "scripts": {
     "start": "nodemon user-content-api/src/server.js",
     "build": "webpack",
-    "deploy": "node user-content-api/deploy-webtask",
+    "deploy-dev": "node user-content-api/deploy-webtask",
     "deploy-prod": "node user-content-api/deploy-webtask --prod",
     "test": "npm run cleanup && npm run setup && npm run test-api | faucet",
     "test-debug": "npm run test-api",
@@ -25,18 +25,26 @@
     "webtask-tools": "^1.2.0"
   },
   "devDependencies": {
-    "eslint-config-airbnb": "^8.0.0",
-    "eslint-plugin-react": "^5.0.1",
+    "eslint": "^3.3.1",
+    "eslint-config-standard": "^6.0.0-beta.3",
+    "eslint-plugin-promise": "^2.0.1",
+    "eslint-plugin-standard": "^2.0.0",
     "faucet": "0.0.1",
     "minimist": "^1.2.0",
     "mongodb": "^2.0.0",
+    "nodemon": "^1.10.2",
     "supertest": "^1.1.0",
-    "tape": "^4.4.0"
+    "tape": "^4.4.0",
+    "webpack": "^1.13.2"
   },
   "keywords": [
     "micro-services",
     "webtask.io"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/michaelrambeau/bestofjs-webtasks.git"
+  },
   "author": "Michael Rambeau",
-  "license": "ISC"
+  "license": "MIT"
 }

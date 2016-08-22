@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
 const fields = {
   name: String,
@@ -28,19 +28,19 @@ const fields = {
     stargazers_count: Number,
     pushed_at: Date
   }
-};
+}
 
 const schema = new mongoose.Schema(fields, {
   collection: 'project'
-});
+})
 
 schema.methods.toString = function () {
-  return 'Project ' + this.name + ' ' + this._id;
-};
+  return 'Project ' + this.name + ' ' + this._id
+}
 
 schema.virtual('key').get(function () {
-  return this.name.toLowerCase().replace(/[^a-z._\-0-9]+/g, '-');
-});
+  return this.name.toLowerCase().replace(/[^a-z._\-0-9]+/g, '-')
+})
 
-const model = mongoose.model('Project', schema);
-module.exports = model;
+const model = mongoose.model('Project', schema)
+module.exports = model

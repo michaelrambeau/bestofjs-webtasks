@@ -2,4 +2,4 @@ module.exports = {
   COMMENT_MAX_LENGTH: 500,
   URL_MAX_LENGTH: 100,
   TITLE_MAX_LENGTH: 100
-};
+}

@@ -1,8 +1,8 @@
-const mongoose = require('mongoose');
-const _ = require('lodash');
+const mongoose = require('mongoose')
+const _ = require('lodash')
 
-const getErrorMessage = require('../getErrorMessage');
-const constants = require('./constants');
+const getErrorMessage = require('../getErrorMessage')
+const constants = require('./constants')
 
 const fields = {
   project: {
@@ -34,30 +34,29 @@ const fields = {
   },
   updatedAt: { type: Date },
   sample: Boolean
-};
+}
 
 const schema = new mongoose.Schema(fields, {
   collection: 'reviews'
-});
-
+})
 
 schema.methods.toJSON = function () {
-  const item = this;
-  const result = _.pick(item, ['_id', 'project', 'rating', 'createdBy', 'createdAt', 'updatedAt']);
-  result.comment = item.comment.md;
-  return result;
-};
+  const item = this
+  const result = _.pick(item, ['_id', 'project', 'rating', 'createdBy', 'createdAt', 'updatedAt'])
+  result.comment = item.comment.md
+  return result
+}
 
 schema.statics.canCreate = function (data) {
   return this.find({ project: data.project, createdBy: data.createdBy })
     .then(results => {
-      console.log('Existing reviews by the same user', results);
+      console.log('Existing reviews by the same user', results)
       if (results.length > 0) {
-        throw new Error(getErrorMessage('DUPLICATE_REVIEW'));
+        throw new Error(getErrorMessage('DUPLICATE_REVIEW'))
       }
-      return true;
-    });
-};
+      return true
+    })
+}
 
-const model = mongoose.model('Review', schema);
-module.exports = model;
+const model = mongoose.model('Review', schema)
+module.exports = model

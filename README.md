@@ -197,9 +197,26 @@ Errors 400
 }
 ```
 
+PUT `/links/:id`
 
+#### Github Issues
 
-* PUT `/links/:id`
+POST `/create-issue`
+
+Create an issue in the given repository.
+
+Request body:
+
+```javascript
+{
+    "repo": "michaelrambeau/bestofjs-sandbox",
+    "content": {
+        "body": "This is a test",
+        "title": "a new test"
+    }
+}
+```
+
 
 ### Local web server
 
@@ -225,6 +242,12 @@ npm test
 
 ### Deploy on webtask.io
 
+Requirement:
+
+```
+npm install wt-cli -g
+```
+
 STEP 1: build a single file from source files, using Webpack
 
 ```
@@ -236,7 +259,7 @@ STEP 2: Create / Update the webtask, using `wt-cli` command line tool.
 For development:
 
 ```
-npm run deploy
+npm run deploy-dev
 ```
 
 For production:
@@ -256,6 +279,6 @@ In local, environment variables are defined in the `.env` file.
 
 * MONGO_URI: mongodb URL, database used to store reviews and links
 * MONGO_URI_TEST: mongodb URL, database used for tests only (its content is automatically deleted by `setup` command)
-* AUTH0_API_TOKEN: token used to authenticate POST and PUT requests
+* AUTH0_CLIENT_SECRET: Auth0 secret key, required to get user's Github token in order to make Github API requests on behalf of the user
 
-webtask deploy script `user-content-api/deploy-webtask.js` automatically passes `MONGO_URI` and `AUTH0_API_TOKEN` variables, using the `--secret` parameter.
+webtask deploy script `user-content-api/deploy-webtask.js` automatically passes `MONGO_URI` and `AUTH0_CLIENT_SECRET` variables, using the `--secret` parameter.
