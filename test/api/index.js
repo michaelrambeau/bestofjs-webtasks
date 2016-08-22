@@ -176,7 +176,7 @@ function run(app) {
             return t.fail(err.message);
           }
           const json = result.body;
-          t.equal(json.message, getErrorMessage('DUPLICATE_LINK'), `DUPLICATE_LINK error should be returned`);
+          t.ok(json.message.indexOf('duplicate key error') > -1, `DUPLICATE_LINK error should be returned`);
           t.end();
         });
     });
