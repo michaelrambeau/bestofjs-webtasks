@@ -38,9 +38,9 @@ schema.methods.toString = function () {
   return 'Project ' + this.name + ' ' + this._id
 }
 
-schema.virtual('key').get(function () {
-  return this.name.toLowerCase().replace(/[^a-z._\-0-9]+/g, '-')
-})
+// schema.virtual('key').get(function () {
+//   return this.name.toLowerCase().replace(/[^a-z._\-0-9]+/g, '-')
+// })
 
 const model = mongoose.model('Project', schema)
 module.exports = model

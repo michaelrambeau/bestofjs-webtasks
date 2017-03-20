@@ -1,15 +1,15 @@
 const mongoose = require('mongoose')
 const _ = require('lodash')
 
-const getErrorMessage = require('../getErrorMessage')
+const getErrorMessage = require('../helpers/getErrorMessage')
 const constants = require('./constants')
 
 const fields = {
-  projects: {
-    type: [mongoose.Schema.ObjectId],
+  projects: [{
+    type: mongoose.Schema.ObjectId,
     ref: 'Project',
     required: true
-  },
+  }],
   title: {
     type: String,
     maxlength: constants.TITLE_MAX_LENGTH,
@@ -47,8 +47,7 @@ const schema = new mongoose.Schema(fields, {
 schema.methods.toJSON = function () {
   const item = this
   const result = _.pick(item, ['_id', 'title', 'url', 'projects', 'createdBy', 'createdAt', 'updatedAt'])
-  // result.id = item._id;
-  // result.projects = item.projects.map(project => project.key);
+  result.projects = item.projects.map(project => project && project.github.full_name)
   result.comment = item.comment.md
   return result
 }

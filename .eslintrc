@@ -1,5 +1,12 @@
 {
-  "extends": "standard",
+  "parser"  : "babel-eslint",
+  "extends" : [
+    "standard",
+  ],
+  "plugins": [
+    "babel",
+    "import"
+  ],
   "rules": {
     "indent": [2, 2],
     "comma-dangle": 0,
@@ -13,6 +20,11 @@
     "quotes": 1,
     "dot-notation": 0,
     "no-console": 0,
-    "no-else-return": 0
+    "no-else-return": 0,
+    "import/no-unresolved": [2, {commonjs: true, amd: true}],
+    "import/named": 2,
+    "import/namespace": 2,
+    "import/default": 2,
+    "import/export": 2  
   }
 }

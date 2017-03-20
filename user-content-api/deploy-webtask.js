@@ -4,7 +4,7 @@
 require('dotenv').load()
 const minimist = require('minimist')
 
-const version = 'v2' // version number added at the end of the production URL
+const version = 'v3' // version number added at the end of the production URL
 
 // Check command line arguments
 const argv = minimist(process.argv.slice(2))

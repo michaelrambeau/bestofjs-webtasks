@@ -1,6 +1,6 @@
 {
   "name": "bestofjs-webtasks",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Bestof.js.org micro-services built with webtask.io",
   "scripts": {
     "start": "nodemon user-content-api/src/server.js",
@@ -11,6 +11,7 @@
     "test-debug": "npm run test-api",
     "test-ava": "ava test/api/ava-test1.js --verbose",
     "test-api": "tape test/index.js",
+    "test-basic": "tape test/basic-test.js",
     "setup": "node commands/setup",
     "cleanup": "node commands/cleanup"
   },

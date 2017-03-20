@@ -1,5 +1,7 @@
-const mongodb = require('mongodb');
-const ObjectId = mongodb.ObjectId;
+/* eslint-disable quotes */
+const mongodb = require('mongodb')
+const ObjectId = mongodb.ObjectId
+
 module.exports = {
   "results": [
     {
@@ -7,7 +9,7 @@ module.exports = {
       "title": "ES6 promises in depth",
       "url": "https://ponyfoo.com/articles/es6-promises-in-depth",
       "projects": [
-        "55723c9f4140883353bc773e"
+        ObjectId("55723c9f4140883353bc773e")
       ],
       "comment": {
         "md": "Everything you need to know about promises."
@@ -20,10 +22,10 @@ module.exports = {
       "title": "My link about 4 projects",
       "url": "http://development.bestofjs.divshot.io",
       "projects": [
-        "56a95b5843bdc81100111331",
-        "55fbaf4dc0b48f03006c6c98",
-        "55aba39b8f937d03008d41c8",
-        "55723c9f4140883353bc774e"
+        ObjectId("56a95b5843bdc81100111331"),
+        ObjectId("55fbaf4dc0b48f03006c6c98"),
+        ObjectId("55aba39b8f937d03008d41c8"),
+        ObjectId("55723c9f4140883353bc774e")
       ],
       "createdBy": "michaelrambeau",
       "createdAt": "2016-01-31T03:31:14.572Z",
@@ -36,7 +38,7 @@ module.exports = {
       "title": "Bootstrap is cool",
       "url": "https://bestofjs.herokuapp.com/keystone/",
       "projects": [
-        "55723c9f4140883353bc773e"
+        ObjectId("55723c9f4140883353bc773e")
       ],
       "createdBy": "michaelrambeau",
       "createdAt": "2016-01-31T11:51:16.132Z",
@@ -45,4 +47,4 @@ module.exports = {
       }
     }
   ]
-};
+}

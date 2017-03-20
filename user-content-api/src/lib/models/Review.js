@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const _ = require('lodash')
 
-const getErrorMessage = require('../getErrorMessage')
+const getErrorMessage = require('../helpers/getErrorMessage')
 const constants = require('./constants')
 
 const fields = {
@@ -44,6 +44,7 @@ schema.methods.toJSON = function () {
   const item = this
   const result = _.pick(item, ['_id', 'project', 'rating', 'createdBy', 'createdAt', 'updatedAt'])
   result.comment = item.comment.md
+  result.project = item.project && item.project.github.full_name
   return result
 }
 

@@ -1,19 +1,28 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const compression = require('compression')
-const _ = require('lodash')
 require('isomorphic-fetch') // node-fetch is not available on webtask.io
 const mongoose = require('mongoose')
 mongoose.Promise = global.Promise
 
+// Helpers
 const github = require('./helpers/github')
-const tokenMiddleware = require('./auth/authMiddleware')
+const sendError = require('./helpers/send-error')
 
+// Middlewares
+const tokenMiddleware = require('./middlewares/auth')
+const githubMiddleware = require('./middlewares/project-id')
+const crossDomainMiddleware = require('./middlewares/cross-domain')
+
+// Models
 const Review = require('./models/Review')
 const Link = require('./models/Link')
 const Project = require('./models/Project')
 
-const getErrorMessage = require('./getErrorMessage')
+// Routes
+const apiFind = require('./routes/find')
+const apiCreate = require('./routes/create')
+const apiUpdate = require('./routes/update')
 
 module.exports = createServer
 
@@ -73,6 +82,7 @@ function createServer (localContext) {
     endPoint: '/reviews',
     Model: Review,
     editableFields: ['rating', 'comment'],
+    projectField: 'project',
     auth
   })
 
@@ -81,6 +91,7 @@ function createServer (localContext) {
     endPoint: '/links',
     Model: Link,
     editableFields: ['url', 'title', 'projects', 'comment'],
+    projectField: 'projects',
     auth
   })
 
@@ -107,88 +118,24 @@ function createRoutes (app, options) {
   // Class name defined in parse.com
   const Model = options.Model
 
-  // Array of field name that can be updated by PUT requests
-  const editableFields = options.editableFields
-
   // GET: show all reviews
   // Token is NOT required.
-  app.get(endPoint, function (req, res) {
-    console.log('GET request', options.endPoint)
-    Model.find()
-      // .populate('project', 'name')
-      // .populate('projects', 'name')
-      .exec()
-      .then(json => {
-        const results = json.map(item => item.toJSON())
-        res.json({ results })
-      })
-      .catch(err => sendError(res, err.message))
-  })
+  app.get(endPoint, apiFind(Model, options))
 
   // POST: create a new item
-  app.post(endPoint, auth, function (req, res) {
-    var data = {}
-    _.assign(data, req.body, {
-      createdBy: res.userProfile.nickname,
-      createdAt: new Date()
-    })
-    data = formatComment(data)
-    console.log('----- POST request -----', data)
-    const item = new Model(data)
-    const validationErrors = item.validateSync()
-    if (validationErrors) {
-      console.log('>>> Mongoose item.validationSync() fails!', validationErrors)
-      return sendError(res, 'Model validation failed', validationErrors)
-    }
-    Model.canCreate(data)
-      .then(() => {
-        console.log('SAVING...')
-        return item.save()
-      })
-      .then(result => {
-        console.log('ITEM CREATED!', result)
-        return res.json(result)
-      })
-      .catch(err => {
-        console.log('NO CREATION', err.message)
-        sendError(res, err.message)
-      })
-  })
+  app.post(
+    endPoint,
+    auth,
+    githubMiddleware(options.projectField),
+    apiCreate(Model, options)
+  )
 
   // PUT: update an existing item
-  app.put(`${endPoint}/:id`, auth, function (req, res) {
-    const id = req.params.id
-    // Keep only `rating` and `comment` fields from the PUT request
-    var data = _.pick(req.body, editableFields)
-    data = formatComment(data)
-    // console.log('PUT request', id, data);
-
-    // Check if the user requesting the update is the one who created the item
-    Model.findById(id)
-      .then(result => {
-        if (!result) return Promise.reject(new Error('No item found with id ' + id))
-        if (res.userProfile.nickname !== result.createdBy) {
-          return Promise.reject(new Error(getErrorMessage('CREATOR_ONLY')))
-        }
-        console.log('Update allowed', result.createdBy)
-        return result
-      })
-      .then(item => {
-        _.assign(item, data, {
-          updatedAt: new Date(),
-        })
-        return item.save()
-      })
-      .then(result => {
-        console.log('ITEM UPDATED!')
-        return res.json(result)
-      })
-      .catch(err => {
-        console.log('NO UPDATE', err)
-        const msg = err.code === '11001' || err.code === '11000' ? getErrorMessage('DUPLICATE_LINK') : err.message
-        sendError(res, msg)
-      })
-  })
+  app.put(
+    `${endPoint}/:id`,
+    auth,
+    githubMiddleware(options.projectField),
+    apiUpdate(Model, options))
 }
 
 //
@@ -203,29 +150,6 @@ function dbMiddleware (localContext) {
   }
 }
 
-function crossDomainMiddleware (req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*')
-  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,OPTIONS')
-  res.header('Access-Control-Allow-Headers', 'Content-Type,token')
-  res.header('Cache-Control', 'max-age=7200')
-  next()
-}
-
 function getProjectKey (name) {
   return name.toLowerCase().replace(/[^a-z._\-0-9]+/g, '-')
-}
-
-function sendError (res, message, data) {
-  console.log('>>> Send a JSON error object to the client', message)
-  const json = { message }
-  if (data) json.data = data
-  res.status(400).json(json)
-}
-
-function formatComment (item) {
-  const md = item.comment
-  item.comment = {
-    md
-  }
-  return item
 }

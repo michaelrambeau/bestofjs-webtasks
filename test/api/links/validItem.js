@@ -1,8 +1,10 @@
-{
+/* eslint-disable quotes */
+
+module.exports = {
   "title": "link",
   "url": "http://mongoosejs.com/docs/guide.html?",
   "projects": [
-    "55723c9f4140883353bc774c"
+    "d3/d3"
   ],
   "comment": "This is a good comment :)",
   "sample": true
