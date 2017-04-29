@@ -1,6 +1,6 @@
 {
   "name": "bestofjs-webtasks",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Bestof.js.org micro-services built with webtask.io",
   "scripts": {
     "start": "nodemon user-content-api/src/server.js",
